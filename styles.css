@@ -1,0 +1,41 @@
+ul {
+  margin: 1px;
+ list-style-type: none;
+ overflow: hidden;
+ background-color: #F0F0F0;
+ font-family: "Futura BT", Helvetica, Arial, sans-serif;
+ color: #6D6E70;
+}
+
+li {
+ float: left;
+ border-right: 2px ;
+ font-family: "Futura BT", Helvetica, Arial, sans-serif;
+}
+
+/* Add a border to all( but not the last) list items */
+li:last-child {
+ border-right: none;
+ font-family: "Futura BT", Helvetica, Arial, sans-serif;
+}
+
+li a {
+ display: block;
+ color: black;
+ text-align: left;
+ padding: 15px 17px;
+ text-decoration: none;
+ font-family: "Futura BT", Helvetica, Arial, sans-serif;
+ color: #6D6E70;
+}
+
+/* Links will change color when hovered over */
+li a:hover {
+ background-color: #FAFAFA;
+ font-family: "Futura BT", Helvetica, Arial, sans-serif;
+}
+
+.active2 {
+ background-color: #FAFAFA;
+ font-family: "Futura BT", Helvetica, Arial, sans-serif;
+}

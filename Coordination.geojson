@@ -1,0 +1,159 @@
+{
+   "type": "FeatureCollection",
+   "features": [
+  {
+    "type": "Feature",
+    "geometry": {
+       "type": "Point",
+       "coordinates":  [ -120.5000,44.0000 ]
+    },
+    "properties": {
+    "Technician":"Max",
+    "State":"Oregon",
+    "Incident_Type":"Wildfire",
+    "Total Fire Amount in 2020":null,
+    "Total Acres Burned":"1200000",
+    "Homes_Destroyed":4009,
+    "Damage_Cost":609000000,
+    "Overnight Stays":121800,
+    "Meals":388300,
+    "Relief Items":13600,
+    "Care Contacts":20800,
+    "Household_Financial_Assistantce":1730,
+    "FIELD15":""
+    }
+  },
+  {
+    "type": "Feature",
+    "geometry": {
+       "type": "Point",
+       "coordinates":  [ -120.740135,47.751076 ]
+    },
+    "properties": {
+    "Technician":"Max",
+    "State":"Washington",
+    "Incident_Type":"Wildfire",
+    "Total Fire Amount in 2020":null,
+    "Total Acres Burned":"",
+    "Homes_Destroyed":null,
+    "Damage_Cost":null,
+    "Overnight Stays":3600,
+    "Meals":15300,
+    "Relief Items":2200,
+    "Care Contacts":null,
+    "Household_Financial_Assistantce":70,
+    "FIELD15":""
+    }
+  },
+  {
+    "type": "Feature",
+    "geometry": {
+       "type": "Point",
+       "coordinates":  [ -114.1718466,46.637976 ]
+    },
+    "properties": {
+    "Technician":"Max",
+    "State":"Montana & Idaho",
+    "Incident_Type":"Wildfire",
+    "Total Fire Amount in 2020":null,
+    "Total Acres Burned":"",
+    "Homes_Destroyed":null,
+    "Damage_Cost":null,
+    "Overnight Stays":null,
+    "Meals":900,
+    "Relief Items":null,
+    "Care Contacts":100,
+    "Household_Financial_Assistantce":null,
+    "FIELD15":""
+    }
+  },
+  {
+    "type": "Feature",
+    "geometry": {
+       "type": "Point",
+       "coordinates":  [ -106.9585507,41.2225205 ]
+    },
+    "properties": {
+    "Technician":"Samuel",
+    "State":"Wyoming & Colorado",
+    "Incident_Type":"Wildfire",
+    "Total Fire Amount in 2020":null,
+    "Total Acres Burned":"700000(colorado)",
+    "Homes_Destroyed":null,
+    "Damage_Cost":null,
+    "Overnight Stays":38400,
+    "Meals":38700,
+    "Relief Items":null,
+    "Care Contacts":4200,
+    "Household_Financial_Assistantce":null,
+    "FIELD15":""
+    }
+  },
+  {
+    "type": "Feature",
+    "geometry": {
+       "type": "Point",
+       "coordinates":  [ -119.417931,36.778259 ]
+    },
+    "properties": {
+    "Technician":"Samuel",
+    "State":"California",
+    "Incident_Type":"Wildfire",
+    "Total Fire Amount in 2020":9096,
+    "Total Acres Burned":"4200000",
+    "Homes_Destroyed":null,
+    "Damage_Cost":null,
+    "Overnight Stays":236800,
+    "Meals":457900,
+    "Relief Items":40100,
+    "Care Contacts":29800,
+    "Household_Financial_Assistantce":1220,
+    "FIELD15":""
+    }
+  },
+  {
+    "type": "Feature",
+    "geometry": {
+       "type": "Point",
+       "coordinates":  [ -93.520886,30.2423071 ]
+    },
+    "properties": {
+    "Technician":"Arpita",
+    "State":"Gulf Coast",
+    "Incident_Type":"Hurricane",
+    "Total Fire Amount in 2020":null,
+    "Total Acres Burned":"",
+    "Homes_Destroyed":null,
+    "Damage_Cost":19000000000,
+    "Overnight Stays":759400,
+    "Meals":1900000,
+    "Relief Items":231300,
+    "Care Contacts":53400,
+    "Household_Financial_Assistantce":7600,
+    "FIELD15":""
+    }
+  },
+  {
+    "type": "Feature",
+    "geometry": {
+       "type": "Point",
+       "coordinates":  [ -81.760254,27.994402 ]
+    },
+    "properties": {
+    "Technician":"Arpita",
+    "State":"Florida",
+    "Incident_Type":"Hurricane",
+    "Total Fire Amount in 2020":null,
+    "Total Acres Burned":"",
+    "Homes_Destroyed":null,
+    "Damage_Cost":25000000,
+    "Overnight Stays":808400,
+    "Meals":2000000,
+    "Relief Items":287400,
+    "Care Contacts":60900,
+    "Household_Financial_Assistantce":8760,
+    "FIELD15":"https://www.redcross.org/about-us/news-and-events/news/2020/red-cross-helping-thousands-after-nonstop-disasters.html"
+    }
+  }
+]
+}

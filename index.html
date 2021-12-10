@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8' />
+    <title>American Red Cross</title>
+    <meta name='robots' content='noindex, nofollow'>
+    <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+    <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700' rel='stylesheet'>
+    <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.0/jquery.min.js"></script>
+    <script src="https://api.mapbox.com/mapbox-gl-js/v1.9.1/mapbox-gl.js"></script>
+    <link href="https://api.mapbox.com/mapbox-gl-js/v1.9.1/mapbox-gl.css" rel="stylesheet" />
+    <script src='https://npmcdn.com/csv2geojson@latest/csv2geojson.js'></script>
+    <script src='https://npmcdn.com/@turf/turf/turf.min.js'></script>
+    <link rel="shortcut icon" type="image/x-icon" href="favicon.ico" />
+    <link rel="stylesheet" href="styles.css">
+    <style>
+      body {
+        color:#404040;
+        font:400 15px/22px 'Source Sans Pro', 'Helvetica Neue', Sans-serif;
+        margin:0;
+        padding:0;
+        -webkit-font-smoothing:antialiased;
+      }
+
+      * {
+        -webkit-box-sizing:border-box;
+        -moz-box-sizing:border-box;
+        box-sizing:border-box;
+      }
+
+      .sidebar {
+        float: left;
+        flex-basis: 33.3333%;
+        background-color: #FAFAFA;
+        width:33.3333%;
+        height: 700px;
+        top:0;left:0;
+        overflow:hidden;
+        border-right:1px solid rgba(0,0,0,0.25);
+      }
+      .pad2 {
+        padding:20px;
+      }
+
+      .map {
+        width: 66.666%;
+        height: 700px;
+        margin-left:auto;
+        margin-right:auto;
+      }
+
+      h1 {
+        font-size:22px;
+        margin:0;
+        font-weight:400;
+        line-height: 20px;
+        padding: 20px 2px;
+        text-align: center;
+      }
+      h2 {
+        font-size:20px;
+        margin:0;
+        font-weight:400;
+        line-height: 20px;
+        padding: 20px 2px;
+        text-align: center;
+      }
+
+      a {
+        color:#404040;
+        text-decoration:none;
+      }
+
+      a:hover {
+        color:#101010;
+      }
+
+      .heading {
+        background:#fff;
+        border-bottom:1px solid #eee;
+        min-height:60px;
+        line-height:30px;
+        padding:0 5px;
+        background-color: #FAFAFA;
+        color: #000000;
+      }
+
+      .listings {
+        height:100%;
+        overflow:auto;
+        padding-bottom:30px;
+      }
+
+      .listings .item {
+        display:block;
+        border-bottom:1px solid #eee;
+        padding:5px;
+        text-decoration:none;
+      }
+
+      .listings .item:last-child { border-bottom:none; }
+      .listings .item .title {
+        display:block;
+        color:#00853e;
+        font-weight:700;
+      }
+
+      .listings .item .title small { font-weight:400; }
+      .listings .item.active .title,
+      .listings .item .title:hover { color:#8cc63f; }
+      .listings .item.active {
+        background-color:#f8f8f8;
+      }
+      ::-webkit-scrollbar {
+        width:5px;
+        height:3px;
+        border-left:0;
+        background:rgba(0,0,0,0.1);
+      }
+      ::-webkit-scrollbar-track {
+        background:none;
+      }
+      ::-webkit-scrollbar-thumb {
+        background:#C1C1C1;
+        border-radius:1;
+      }
+
+      .marker {
+        border: none;
+        cursor: pointer;
+        height: 43px;
+        width: 45px;
+        background-image:url(Fire_3.png);
+        /* background-color: rgba(0, 0, 0, 0); */
+      }
+
+      .clearfix { display:block; }
+      .clearfix:after {
+        content:'.';
+        display:block;
+        height:0;
+        clear:both;
+        visibility:hidden;
+      }
+
+      /* Marker tweaks */
+      .mapboxgl-popup {
+        padding-bottom: 50px;
+      }
+      .mapboxgl-popup{
+          max-width: 400px;
+          font: 12px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;
+      }
+
+      .mapboxgl-popup-close-button {
+        display:none;
+      }
+      .mapboxgl-popup-content {
+        font:400 15px/22px 'Source Sans Pro', 'Helvetica Neue', Sans-serif;
+        padding:0;
+        width:180px;
+      }
+      .mapboxgl-popup-content-wrapper {
+        padding:1%;
+      }
+      .mapboxgl-popup-content h3 {
+        background:#E8E8E8;
+        color:#000000;
+        margin:0;
+        display:block;
+        padding:10px;
+        border-radius:3px 3px 0 0;
+        font-weight:700;
+        margin-top:-15px;
+      }
+
+      .mapboxgl-popup-content h4 {
+        margin:0;
+        display:block;
+        padding: 10px 10px 10px 10px;
+        font-weight:400;
+      }
+
+      .mapboxgl-popup-content div {
+        padding:10px;
+      }
+
+      .mapboxgl-container .leaflet-marker-icon {
+        cursor:pointer;
+      }
+
+      .mapboxgl-popup-anchor-top > .mapboxgl-popup-content {
+        margin-top: 15px;
+      }
+
+      .mapboxgl-popup-anchor-top > .mapboxgl-popup-tip {
+        border-bottom-color: #91c949;
+      }
+
+      #contentMain{
+       display: flex;
+      }
+      .wrapper {
+        padding-top: 1px;
+        text-align:left;
+        padding-left: 12%;
+          }
+      .wrapper ul {
+        display: inline-block;
+        margin: 0;
+        padding: 0;
+        zoom:1;
+        *display: inline;
+          }
+      .wrapper li {
+        float: left;
+          }
+      #headerImg{
+         background-color: #E8E8E8;
+         overflow: hidden;
+   			width: 100%;
+   			height: 49px;
+         top: 0;
+          }
+      #logo{
+        width: 10%;
+        float: right;
+        padding-top: 0.5em;
+      }
+      .map-overlay {
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        background: rgba(255, 255, 255, 0.8);
+        margin-right: 20px;
+        font-family: Arial, sans-serif;
+        overflow: auto;
+        border-radius: 3px;
+      }
+      #features {
+        top: 70px;
+        height: 200px;
+        margin-top: 20px;
+        width: 270px;
+      }
+  /*	FIRST NAV CSS HERE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!	*/
+  		#firstHeadNav{
+  		display: flex;
+  		background-color: #F8F9FA;
+  		}
+  		#logo1{
+  			float: left;
+  			padding: 0.5em 1em;
+  			/*div width*/
+  			flex-basis: 25%;
+  		}
+  		#logo1 img{
+  			width: 150px;
+  		}
+  		#navWrap{
+  			flex-basis: 75%;
+  		}
+  		.navItem a{
+  			padding-top: 1.5em;
+  			width: 12%;
+  			float: right;
+  			color: #767676;
+  		}
+  		.navItem a:hover, .navItem a:active{
+  			color: black;
+  		}
+  		#Coordination a{
+  			color: black;
+  		}
+      footer{
+        text-align: center;
+      }
+      #fullScreen{
+      	/* margin-top: 1em; */
+      	text-align: center;
+      	text-decoration: none;
+      	color: #E11B22;
+      	width: 150px;
+      	border: 2px solid #cc0000;
+      	padding: 0.5em 1em;
+        background-color: #E11B22;
+      }
+      #fsbtn{
+      	text-decoration: none;
+      	color:#FFFFFF;
+      	font-weight: bold;
+      	left:0;
+      }
+      #buttonReport{
+        text-align: center;
+      }
+      .fakeLegend{
+        width:25px;
+        height: auto;
+
+      }
+      #legendLayout{
+        text-align: center;
+        padding-bottom: 30px;
+      }
+    </style>
+  </head>
+  <body>
+
+    <div id="firstHeadNav">
+    <div id="logo1"><img src="redCross.png" alt="red cross logo"/></div>
+      <div id="navWrap">
+<!-- float right so please write the text backwards-->
+
+  </div>
+    </div>
+
+
+
+    <div id="contentMain">
+    <div class='sidebar'>
+      <div class='heading'>
+        <h1>Description</h1>
+        <p>This interactive web map tool was created to collect data about the Missing Maps prpject.
+          Through this tool, evaluator can track and moniter where mapping events are happening using the United States as an example.
+            Click on icons to learn more about the recorded mapping events!</p>
+        <h2>Legend</h2>
+        <p id="legendLayout">
+          <img class="fakeLegend" src="LegendIncident.png" alt="red cross logo"/>     Mapping Events <br />
+          <img class="fakeLegend" src="LegendRegion.png" alt="red cross logo"/>     American Red Cross Region
+        <br />
+      </p>
+        <p>
+          Want to add events to the map? Use the button below to update the event you want to update on a Googlesheet, and it will show up on the map after refreshing the page!
+        </p>
+        <p id="buttonReport">
+
+            <span id="fullScreen"><a id="fsbtn" href="https://docs.google.com/spreadsheets/d/1eS2b-4CTWVgpl-tpwHT5iFzJLeG7ITdZTRIiFc47qVc/edit#gid=0" target="_blank">Record Mapping Events</a></span>
+        </p>
+
+      </div>
+      <div id='listings' class='listings'></div>
+    </div>
+    <div id='map' class='map'></div>
+    <!-- <div class='map-overlay' id='features'><h2>American Red Cross Region</h2><div id='pd'><p>Hover over a region!</p></div></div> -->
+    </div>
+    <script>
+//
+//       var transformRequest = (url, resourceType) => {
+//         var isMapboxRequest =
+//           url.slice(8, 22) === "api.mapbox.com" ||
+//           url.slice(10, 26) === "tiles.mapbox.com";
+//         return {
+//           url: isMapboxRequest
+//             ? url.replace("?", "?pluginName=sheetMapper&")
+//             : url
+//         };
+//       };
+//       mapboxgl.accessToken = "pk.eyJ1IjoieGlhbmd5dWdpcyIsImEiOiJja2ZlaHV0c2QwNTNlMnRuYjRjbTYxeXFtIn0.cGUreWEZThxryiB2ppiCgw";
+//       /**
+//        * Add the map to the page
+//       */
+//       var map = new mapboxgl.Map({
+//         container: 'map',
+//         style: "mapbox://styles/xiangyugis/ckidp44hb2gwf19p9oqb38phy",
+//         center: [-106.9585507,41.2225205],
+//         zoom: 3,
+//         scrollZoom: true
+//       });
+//
+//         // map.getCanvas().style.cursor = 'default';
+//         //
+//         // map.on('mousemove', function(e) {
+//         //   var states = map.queryRenderedFeatures(e.point, {
+//         //     layers: ['American_Red_Cross_Regions-aexgzm']
+//         //   });
+//         //
+//         //   if (states.length > 0) {
+//         //     document.getElementById('pd').innerHTML = '<h3><strong>' + states[0].properties.region + '</strong></h3><p><strong><em>' + states[0].properties.sq_miles + '</strong> people per square mile</em></p>';
+//         //   } else {
+//         //     document.getElementById('pd').innerHTML = '<p>Hover over a region!</p>';
+//         //   }
+//         // });
+//
+//         map.on('load', function() {
+//               map.getCanvas().style.cursor = 'default';
+//               map.fitBounds([
+//                   [-133.2421875, 16.972741],
+//                   [-47.63671875, 52.696361]
+//                 ]);
+//
+//               map.on('mousemove', function(e) {
+//                 var states = map.queryRenderedFeatures(e.point, {
+//                   layers: ['American_Red_Cross_Regions-aexgzm']
+//                 });
+//
+//                 if (states.length > 0) {
+//                   document.getElementById('pd').innerHTML = '<h3><strong>' + states[0].properties.region + '</strong></h3><p><strong><em>' + states[0].properties.sq_miles + '</strong> people per square mile</em></p>';
+//                 } else {
+//                   document.getElementById('pd').innerHTML = '<p>Hover over a region!</p>';
+//                 }
+//               });
+//               });
+//       $(document).ready(function () {
+//         $.ajax({
+//           type: "GET",
+//           //YOUR TURN: Replace with csv export link
+//           url: 'https://docs.google.com/spreadsheets/d/1eS2b-4CTWVgpl-tpwHT5iFzJLeG7ITdZTRIiFc47qVc/gviz/tq?tqx=out:csv&sheet=Sheet1',
+//           dataType: "text",
+//           success: function (csvData) { makeGeoJSON(csvData); }
+//         });
+//         function makeGeoJSON(csvData) {
+//         csv2geojson.csv2geojson(csvData, {
+//           latfield: 'Latitude',
+//           lonfield: 'Longitude',
+//           delimiter: ','
+//         }, function (err, data) {
+//           map.on('load', function () {
+//             //Add the the layer to the map
+//             map.addLayer({
+//               'id': 'csvData',
+//               'type': 'cicle',
+//               'source': {
+//                 'type': 'geojson',
+//                 'data': data
+//               },
+//               'paint': {
+//                 'circle-radius': 10,
+//                 'circle-color': "red"
+//               }
+//             });
+//             // When a click event occurs on a feature in the csvData layer, open a popup at the
+// // location of the feature, with description HTML from its properties.
+//           map.on('click', 'csvData', function (e) {
+//             var coordinates = e.features[0].geometry.coordinates.slice();
+//
+//             //set popup text
+//             //You can adjust the values of the popup to match the headers of your CSV.
+//             // For example: e.features[0].properties.Name is retrieving information from the field Name in the original CSV.
+//             var description = `<h3>` + e.features[0].properties.Incident_Type + `</h3>` + `<h4>` + `<b>` + `Homes Destroyed: ` + `</b>` + e.features[0].properties.Homes_Destroyed + `</h4>`+ `<h4>` + `<b>` + `Damage Cost $: ` + `</b>` + e.features[0].properties.Damage_Cost + `</h4>` + `<h4>` + `<b>` + `Meals Needed: ` + `</b>` + e.features[0].properties.Meals + `</h4>`;
+//
+//             // Ensure that if the map is zoomed out such that multiple
+//             // copies of the feature are visible, the popup appears
+//             // over the copy being pointed to.
+//             while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
+//               coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
+//             }
+//
+//             //add Popup to map
+//
+//             new mapboxgl.Popup()
+//               .setLngLat(coordinates)
+//               .setHTML(description)
+//               .addTo(map);
+//           });
+//
+//           // Change the cursor to a pointer when the mouse is over the places layer.
+//           map.on('mouseenter', 'csvData', function () {
+//             map.getCanvas().style.cursor = 'pointer';
+//           });
+//
+//           // Change it back to a pointer when it leaves.
+//           map.on('mouseleave', 'places', function () {
+//             map.getCanvas().style.cursor = '';
+//           });
+//
+//           var bbox = turf.bbox(data);
+//           map.fitBounds(bbox, { padding: 50 });
+//
+//             });
+//
+//             });
+//             };
+//           });
+
+var transformRequest = (url, resourceType) => {
+      var isMapboxRequest =
+        url.slice(8, 22) === "api.mapbox.com" ||
+        url.slice(10, 26) === "tiles.mapbox.com";
+      return {
+        url: isMapboxRequest
+          ? url.replace("?", "?pluginName=sheetMapper&")
+          : url
+      };
+    };
+    mapboxgl.accessToken = "pk.eyJ1IjoieGlhbmd5dWdpcyIsImEiOiJja2ZlaHV0c2QwNTNlMnRuYjRjbTYxeXFtIn0.cGUreWEZThxryiB2ppiCgw";
+    /**
+     * Add the map to the page
+    */
+    var map = new mapboxgl.Map({
+      container: 'map',
+      style: "mapbox://styles/xiangyugis/ckidp44hb2gwf19p9oqb38phy",
+      center: [-106.9585507,41.2225205],
+      zoom: 5,
+      scrollZoom: true
+    });
+
+      // map.getCanvas().style.cursor = 'default';
+      //
+      // map.on('mousemove', function(e) {
+      //   var states = map.queryRenderedFeatures(e.point, {
+      //     layers: ['American_Red_Cross_Regions-aexgzm']
+      //   });
+      //
+      //   if (states.length > 0) {
+      //     document.getElementById('pd').innerHTML = '<h3><strong>' + states[0].properties.region + '</strong></h3><p><strong><em>' + states[0].properties.sq_miles + '</strong> people per square mile</em></p>';
+      //   } else {
+      //     document.getElementById('pd').innerHTML = '<p>Hover over a region!</p>';
+      //   }
+      // });
+
+      map.on('load', function() {
+            map.getCanvas().style.cursor = 'default';
+            map.fitBounds([
+                [-133.2421875, 16.972741],
+                [-47.63671875, 52.696361]
+              ]);
+
+            map.on('mousemove', function(e) {
+              var states = map.queryRenderedFeatures(e.point, {
+                layers: ['American_Red_Cross_Regions-aexgzm']
+              });
+
+              if (states.length > 0) {
+                document.getElementById('pd').innerHTML = '<h3><strong>' + states[0].properties.region + '</strong></h3><p><strong><em>' + states[0].properties.sq_miles + '</strong> people per square mile</em></p>';
+              } else {
+                document.getElementById('pd').innerHTML = '<p>Hover over a region!</p>';
+              }
+            });
+            });
+    $(document).ready(function () {
+      $.ajax({
+        type: "GET",
+        //YOUR TURN: Replace with csv export link
+        url: 'https://docs.google.com/spreadsheets/d/1eS2b-4CTWVgpl-tpwHT5iFzJLeG7ITdZTRIiFc47qVc/gviz/tq?tqx=out:csv&sheet=Sheet1',
+        dataType: "text",
+        success: function (csvData) { makeGeoJSON(csvData); }
+      });
+      function makeGeoJSON(csvData) {
+      csv2geojson.csv2geojson(csvData, {
+        latfield: 'Latitude',
+        lonfield: 'Longitude',
+        delimiter: ','
+      }, function (err, data) {
+        map.on('load', function () {
+          //Add the the layer to the map
+          map.addLayer({
+            'id': 'csvData',
+            'type': 'circle',
+            'source': {
+              'type': 'geojson',
+              'data': data
+            },
+            'paint': {
+              'circle-radius': 10,
+              'circle-color': "red"
+            }
+          });
+          // When a click event occurs on a feature in the csvData layer, open a popup at the
+// location of the feature, with description HTML from its properties.
+        map.on('click', 'csvData', function (e) {
+          var coordinates = e.features[0].geometry.coordinates.slice();
+
+          //set popup text
+          //You can adjust the values of the popup to match the headers of your CSV.
+          // For example: e.features[0].properties.Name is retrieving information from the field Name in the original CSV.
+          var description = `<h3>` + e.features[0].properties.State + `</h3>` + `<h4>` + `<b>` + `Event Name: ` + `</b>` + e.features[0].properties.Event_Name + `</h4>`+ `<h4>` + `<b>` + `Host Name: ` + `</b>` + e.features[0].properties.Host_name + `</h4>` + `<h4>` + `<b>` + `Volunteers Number: ` + `</b>` + e.features[0].properties.Volunteers_number + `</h4>`;
+
+          // Ensure that if the map is zoomed out such that multiple
+          // copies of the feature are visible, the popup appears
+          // over the copy being pointed to.
+          while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
+            coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
+          }
+
+          //add Popup to map
+
+          new mapboxgl.Popup()
+            .setLngLat(coordinates)
+            .setHTML(description)
+            .addTo(map);
+        });
+
+        // Change the cursor to a pointer when the mouse is over the places layer.
+        map.on('mouseenter', 'csvData', function () {
+          map.getCanvas().style.cursor = 'pointer';
+        });
+
+        // Change it back to a pointer when it leaves.
+        map.on('mouseleave', 'places', function () {
+          map.getCanvas().style.cursor = '';
+        });
+
+        var bbox = turf.bbox(data);
+        map.fitBounds(bbox, { padding: 50 });
+
+          });
+
+          });
+          };
+        });
+    </script>
+  </body>
+  <footer>
+    <p>
+      &copy; 2021 - IDCE, Clark University
+    </p>
+    </footer>
+</html>
